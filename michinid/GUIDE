@@ -1,0 +1,11 @@
+git bash 실행
+
+1. git pull https://github.com/michinid/uberFX (로컬파일을 최신으로 업데이트)
+
+2. 로컬에서 파일 수정
+
+3. git add . (업데이트할 파일 추가 "."은 하위폴더 포함 모든 파일 / 파일 또는 폴더 이름으로 선택적으로 업데이트 가능)
+
+4. git commit -m '내용' (변경사항 알리는 글 추가)
+
+5. git push -u origin master (업데이트 수행)
