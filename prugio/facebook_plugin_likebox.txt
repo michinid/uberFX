@@ -1,22 +1,18 @@
-﻿1. html 태그에 아래 속성을 추가해준다
-
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://ogp.me/ns/fb#">
-
-
-
-2. body 태그 내부에 아래 스크립트를 넣어준다
+﻿1. body 태그 내부에 아래 스크립트를 넣어준다
 
 <div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/ko_KR/all.js#xfbml=1";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<script>
+(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "http://connect.facebook.net/ko_KR/all.js#xfbml=1";
+	fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
 
 
 
-3. 페이스북 플러그인을 삽입하고싶은 위치에 아래 스크립트를 넣어준다
+2. 페이스북 플러그인을 삽입하고싶은 위치에 아래 스크립트를 넣어준다
 
 <div class="fb-like-box" data-href="http://www.facebook.com/prugio" data-width="270" data-height="250" data-show-faces="false" data-border-color="#f2f2f2" data-stream="true" data-header="false"></div>
