@@ -1,0 +1,28 @@
+﻿<script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+new TWTR.Widget({
+  version: 2,
+  type: 'profile',
+  rpp: 3,
+  interval: 30000,
+  width: 300,
+  height: 250,
+  theme: {
+	shell: {
+	  background: '#ffffff',
+	  color: '#888888'
+	},
+	tweets: {
+	  background: '#f2f2f2',
+	  color: '#666666',
+	  links: '#333333'
+	}
+  },
+  features: {
+	scrollbar: true,
+	loop: false,
+	live: false,
+	behavior: 'all'
+  }
+}).render().setUser('prugio_dw').start();
+</script>
