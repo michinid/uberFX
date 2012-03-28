@@ -1,0 +1,207 @@
+﻿1. 터치가 되는 장치인지 아닌지 확인 및 분기
+
+
+>> 터치가 되는 장치인지 확인
+
+var touch = 'ontouchstart' in window;
+
+-> 'ontouchstart' in window 는 BOOL 값을 반환
+   터치가 되는 장치일 경우 true  ex) 아이폰, 아이패드, 갤럭시 등
+   터치가 안되는 장치일 경우 false  ex) PC, 노트북 등
+
+
+
+>> 분기처리
+
+if (touch) {
+  // 터치가 되는 장치에서의 동작 입력
+} else {
+  // 터치가 되지 않는 장치에서의 동작 입력
+}
+
+
+--------------------------------------------------------------------------
+
+
+2. MarkUp
+
+<div id="contents_menu">
+  <div class="scroll_card">
+    <ul class="cards">
+      <li><img src="img/img_0.png" alt=""/></li>
+      <li><img src="img/img_1.png" alt=""/></li>
+      <li><img src="img/img_2.png" alt=""/></li>
+      <li><img src="img/img_3.png" alt=""/></li>
+      <li><img src="img/img_4.png" alt=""/></li>
+    </ul>
+  </div>
+  <div class="scroll_bar">
+    <div class="slider_container">
+      <div class="slider"></div>
+    </div>
+  </div>
+</div>
+
+
+
+--------------------------------------------------------------------------
+
+
+
+3. CSS
+
+#contents_menu {position:relative;width:100%}
+#contents_menu .scroll_card {position:absolute;width:1680px;z-index:2}
+#contents_menu .scroll_card ul li {float:left;width:330px}
+
+#contents_menu .scroll_bar {clear:left;position:absolute;top:350px;width:100%;height:91px;z-index:1}
+#contents_menu .scroll_bar .slider_container {margin-top:35px;width:940px;height:20px;background:url('../img/slide_bar.png') }
+#contents_menu .scroll_bar .slider_container .slider {position:absolute;top:36px;width:242px;height:19px;background:url('../img/slide_slider.png') no-repeat;cursor:pointer}
+
+
+
+--------------------------------------------------------------------------
+
+
+
+4. JavaScrip
+
+
+>> Touch Swipe
+
+jQuery TouchSwipe Plugin 사용
+
+jquery.touchSwipe-1.2.5.js 파일 prugio 폴더에 업로드 했음
+
+>> code
+
+var IMG_WIDTH = 330;	// 카드 한개 너비
+var currentImg=0;
+var maxImages=4;	// 총 슬라이드 횟수
+var speed=500;		// 슬라이드 애니메이션 속도
+
+var imgs;		// 카드들 담을 배열
+
+var $sliderContainer = $(".slider_container");	// 슬라이더 컨테이너
+
+$sliderContainer.hide();		// 슬라이더 컨테이너 숨김
+
+var swipeOptions=
+{
+	triggerOnTouchEnd : false,	// 터치하는동안 카드를 잡아 끌려면 true
+	swipeStatus : swipeStatus,
+	allowPageScroll:"vertical",	// 스크롤 방향
+	threshold:100			// Snap 감도
+}
+
+$(function(){				
+	imgs = $(".cards");		// 카드들을 배열에 저장
+	imgs.swipe( swipeOptions );
+});
+
+/**
+* Catch each phase of the swipe.
+* move : we drag the div.
+* cancel : we animate back to where we were
+* end : we animate to the next image
+*/			
+function swipeStatus(event, phase, direction, distance)
+{
+	//If we are moving before swipe, and we are going Lor R in X mode, or U or D in Y mode then drag.
+	if( phase=="move" && (direction=="left" || direction=="right") ) {
+		var duration=0;
+		if (direction == "left") {
+			scrollImages((IMG_WIDTH * currentImg) + distance, duration);
+		} else if (direction == "right") {
+			scrollImages((IMG_WIDTH * currentImg) - distance, duration);
+		}
+	}
+	else if ( phase == "cancel") {
+		scrollImages(IMG_WIDTH * currentImg, speed);
+	}
+	else if ( phase =="end" ) {
+		if (direction == "right") {
+			previousImage();
+		}
+		else if (direction == "left") {
+			nextImage();
+		}
+	}
+}
+function previousImage() {
+	currentImg = Math.max(currentImg-1, 0);
+	scrollImages( IMG_WIDTH * currentImg, speed);
+}
+function nextImage() {
+	currentImg = Math.min(currentImg+1, maxImages-1);
+	scrollImages( IMG_WIDTH * currentImg, speed);
+}	
+/**
+* Manuallt update the position of the imgs on drag
+*/
+function scrollImages(distance, duration) {
+	imgs.css("-webkit-transition-duration", (duration/1000).toFixed(1) + "s");
+	//inverse the number we set in the css
+	var value = (distance<0 ? "" : "-") + Math.abs(distance).toString();
+	imgs.css("-webkit-transform", "translate3d("+value +"px,0px,0px)");
+}
+
+
+
+>> Slide
+
+jQuery UI Draggable Plugin 사용
+
+참고: http://docs.jquery.com/UI/Draggable
+
+jquery-1.7.1.min.js 파일 prugio 폴더에 업로드 했음
+
+>> code
+
+var $window = $( window );			// 윈도우 객체
+var $container = $("#contents_menu");		// 슬라이드바 및 카드 포함한 컨테이너
+var $cardContainer = $(.scroll_card");		// 카드 컨테이너
+var $sliderContainer = $(".slider_container");	// 슬라이드 컨테이너
+var $slider = $(".slider_container .slider");	// 슬라이드
+
+var windowWidth;		// 윈도우 창 너비
+var sliderMovingWidth = 698;	// 슽라이드 컨테이너 너비 - 슬라이드 너비 (슬라이드가 움직이는 범위)
+var cardContainerWidth = 1680;	// 카드 컨테이너 너비
+var cardContainerMovingWidth;	// 카드 컨테이너 안보이는 부분의 너비
+var cardContainerPosition, sliderPosition;
+
+// 슬라이드 드래그
+$slider.draggable({
+	axis:"x",		// x축으로만 드래그
+	containment: "parent",	// 부모 범위에서만 드래그
+	cursor: "pointer",	// 드래그하는 동안 마우스 커서 변경
+	drag: function() {	// 드래그하는 동안 실행할 함수
+		/* 슬라이드 위치 저장 */
+		sliderPosition = $slider.position().left;
+		/* 슬라이드 위치에 따른 카드 위치 재설정/변경 */
+		cardContainerPosition = -(sliderPosition * cardContainerMovingWidth) / sliderMovingWidth;
+		$cardContainer.css("left", cardContainerPosition + "px");
+	}
+});
+
+// 윈도우 창 크기 바뀔 때
+$window.bind("resize", function() {
+	/* 윈도우 너비 저장 */
+	windowWidth = $window.width();
+	/* 카드 컨테이너 안보이는 부분의 너비 계산 */
+	cardContainerMovingWidth = cardContainerWidth - windowWidth;
+	
+	/* 카드 컨테이너의 모든 부분이 보일 때 */
+	if( cardContainerMovingWidth < 0 ) {
+		$slider.hide();			// 슬라이드 숨김
+		$cardContainer.css("left", 0);	// 카드 컨테이너 위치 고정
+	}
+	/* 카드 컨테이너가 윈도우 창에 조금이라도 가려질 때 */
+	else {
+		/* 슬라이드 보임 */
+		$slider.show();
+		/* 슬라이드 위치에 따른 카드 위치 재설정/변경 */
+		cardContainerPosition = -(sliderPosition * cardContainerMovingWidth) / sliderMovingWidth;
+		$cardContainer.css("left", cardContainerPosition + "px");
+	}
+}).resize();
